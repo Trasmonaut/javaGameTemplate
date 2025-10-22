@@ -1,7 +1,11 @@
+package fx;
+
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+import main.GamePanel;
+import managers.ImageManager;       
 
 public class BrightnessFX implements ImageFX {
 

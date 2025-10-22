@@ -1,8 +1,13 @@
+package main;
+
+import entities.*;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+
 
 /**
  * GamePanel: minimal, self-contained game surface for the template.

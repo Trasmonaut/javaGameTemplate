@@ -1,3 +1,5 @@
+package managers;
+
 import java.io.*;		// for playing sound clips
 import java.util.HashMap;
 import java.util.Random;

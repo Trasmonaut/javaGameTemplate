@@ -1,3 +1,5 @@
+package main;
+
 import java.awt.*;              // GUI objects
 import java.awt.event.*;        // AWT events
 import javax.swing.*;           // Swing widgets

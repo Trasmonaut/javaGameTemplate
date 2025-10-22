@@ -1,3 +1,5 @@
+package fx;
+
 import java.awt.Graphics2D;
 
 public interface ImageFX {
