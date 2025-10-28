@@ -1,4 +1,4 @@
-# javaGameTemplate
+# JavaGameTemplate
 
 A lightweight, reusable Java 2D game template / engine you can use as the base for all your Java game projects. This repository provides a small but solid foundation (game loop, rendering, input handling, scene/state management, asset loading, and basic entity structure) so you can focus on building gameplay, levels, art, and audio — not reimplementing core engine systems each time.
 
