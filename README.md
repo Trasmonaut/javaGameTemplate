@@ -1,58 +1,67 @@
 # javaGameTemplate
 
-A lightweight, reusable Java 2D game template / engine you can use as the base for all your Java game projects. This repository provides a small but solid foundation (game loop, rendering, input handling, scene/state management, asset loading, and basic entity structure) so you can focus on building gameplay, levels, art, and audio — not reimplementing core engine systems each time.
+A small, readable Java 2D game starter you can copy into new projects. It focuses on clarity and minimum moving parts: a window, a panel with a tiny game loop (Swing Timer), a simple player entity, basic input, asset helpers, and optional dialogue support.
 
-This template is intended to be simple, easy to understand, and easy to extend. Use it as-is, fork it, or copy components into new projects.
+## Project structure
 
+- main/
+  - GameApplication.java — entry point
+  - GameWindow.java — top-level Swing window (info bar, game panel, buttons)
+  - GamePanel.java — rendering surface and game loop
+- entities/
+  - PlayerEntity.java — example player (draws a circle, moves on input)
+  - DialogueBoxEntity.java — simple overlay box to draw dialogue text
+- managers/
+  - ImageManager.java — image loading helpers
+  - SoundManager.java — example audio singleton (optional)
+  - DialogueManager.java — reads lines from a text file one-by-one
+- src/dialouge/test.txt — sample dialogue text (one line per entry)
 
-This repo is a base template for 2D Java games. It's opinionated toward small/indie 2D projects and designed to be a minimal starting point that you can expand with:
-- new game states / scenes
-- entity types and systems (collision, AI, physics)
-- custom rendering, shaders, or UI
-- audio and music management
-- level editors / tilemaps
+No external dependencies are required beyond the JDK.
 
-The goal is rapid iteration: the engine handles the common plumbing, you make the game.
+## Run
 
+- Launch `main.GameApplication`.
+- The window maximizes to your screen; the game panel is centered and uses the screen dimensions.
 
-# Extending the engine — practical tips
+## Controls (default)
 
-- States and Scenes
-  - Keep game logic inside State subclasses; the engine should only call update(dt) and render(g).
-- Entity System
-  - Implement a simple component system if you expect many diverse behaviors (renderable, collidable, physics, AI, etc.).
-- Asset Management
-  - Load assets centrally and dispose / unload when switching scenes to keep memory usage low.
-- Input
-  - Map actions to keys (e.g., "jump", "shoot") rather than checking raw keycodes all over the codebase.
-- Fixed vs Variable timestep
-  - Use a fixed update step for deterministic physics and game logic; interpolate rendering for smooth visuals.
-- Collision & Physics
-  - Start with AABB checks, then add SAT or a library if you need complex collisions.
-- Audio
-  - Abstract your audio calls behind a SoundManager so you can swap implementations later.
-- Performance
-  - Batch drawing where possible. Avoid creating garbage in the hot path to reduce GC stutters.
- 
-## Contributing
+- Start Game: Start button
+- Exit: Exit button
+- Move: Left Arrow / A (left), Right Arrow / D (right)
+- Attack example: Left mouse click (triggers a demo point update)
+- Shield example: Right mouse press/release (demo toggle)
+- Dialogue Next: Next button (advances one line when dialogue is present)
 
-This template is mainly for your personal reuse, but contributions and improvements are welcome:
-- Fix bugs in engine utilities
-- Improve documentation and examples
-- Add example games or demo levels
-- Add convenient scripts for packaging or running
+## Dialogue system (simple)
 
-If you want to contribute, open a PR with a clear description of the change and why it helps as a template.
+- managers/DialogueManager
+  - loadFromFile(String path): loads lines (one per line) into memory
+  - hasNext(): whether more lines remain
+  - nextLine(): returns the next line (or null if none)
+  - reset(): go back to the start
 
----
+- entities/DialogueBoxEntity
+  - setText(String): set the current text to render
+  - draw(Graphics2D g2, int width, int height): draws a semi-transparent box at the bottom and the current text
 
+- main/GamePanel wiring (already included)
+  - On start, reads `src/dialouge/test.txt` and shows the first line if available
+  - gameRender() draws the dialogue box every frame
+  - nextDialogue(): advances to the next text line (called by the window’s Next button)
 
-## Contact
+To change the script, edit `src/dialouge/test.txt` (one line per entry). To disable dialogue, skip calling `loadFromFile` or set empty text in the panel.
 
-Created and maintained by Trasmonaut.
+## Customize quickly
 
-If you want changes to the template (new features, examples, or specific integrations like Tilemap support or LWJGL scaffolding), open an issue or PR in this repo.
+- Replace the PlayerEntity with your own entity and draw it in `GamePanel.gameRender()`.
+- Map more keys in `GameWindow.keyPressed()` (e.g., up/down) and translate to `updateGameEntities(direction)`.
+- Use `ImageManager` to load sprites and draw them instead of the sample circle.
+- If you need sound, use `managers.SoundManager` as a starting point.
+
+## Notes
+
+- The loop uses a Swing Timer (~60 FPS). For physics or precise timing you can swap in a fixed-step loop later.
+- The template avoids complexity: no scene graph, no ECS. Add what you need as your game grows.
 
 Happy game making!
-
----

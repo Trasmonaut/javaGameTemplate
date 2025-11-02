@@ -19,8 +19,8 @@ public class SoundManager {				// a Singleton class
 		clips = new HashMap<String, Clip>();
 		random = new Random();
 
-		// Clip clip = loadClip("sounds/background.wav");	// played from start of the game
-		// clips.put("background", clip);
+		Clip clip = loadClip("src/sounds/ping.wav");	// played from start of the game
+		clips.put("ping", clip);
 
 		
 	}

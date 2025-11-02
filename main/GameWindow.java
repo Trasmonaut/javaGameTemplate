@@ -28,6 +28,9 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
     // Buttons
     private JButton startB;
     private JButton exitB;
+    private JButton logoB;
+    private JButton nextB;
+    private JButton playMusicB;
 
     // Layout
     private Container c;
@@ -71,8 +74,15 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         // Buttons
         startB = new JButton("Start Game");
         exitB = new JButton("Exit");
+        nextB = new JButton("Next");
+        logoB = new JButton("Show Logo");
+        playMusicB = new JButton("Play Music");
+
         startB.addActionListener(this);
         exitB.addActionListener(this);
+        nextB.addActionListener(this);
+        logoB.addActionListener(this);
+        playMusicB.addActionListener(this);
 
         // Main panel layout
         mainPanel = new JPanel(new FlowLayout());
@@ -80,7 +90,6 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         // Game area
         gamePanel = new GamePanel();
         gamePanel.setPreferredSize(new Dimension(screenWidth, 700));
-        gamePanel.createGameEntities();
 
         // Info bar
         JPanel infoPanel = new JPanel(new GridLayout(1, 4));
@@ -91,8 +100,11 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         infoPanel.add(pointsTF);
 
         // Buttons row
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
         buttonPanel.add(startB);
+        buttonPanel.add(nextB);
+        buttonPanel.add(logoB);
+        buttonPanel.add(playMusicB);
         buttonPanel.add(exitB);
 
         // Add to window
@@ -116,6 +128,7 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
     
     // implement single method in ActionListener interface
     
+    @Override
     public void actionPerformed(ActionEvent e) {
     
         String command = e.getActionCommand();
@@ -127,8 +140,27 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
             mainPanel.requestFocus();
         }
 
+        if (command.equals(nextB.getText())) {
+            gamePanel.nextDialogue();
+            mainPanel.requestFocus();
+        }
+
+        if (command.equals(logoB.getText())) {
+            // Load and show the default logo for 3 seconds
+            boolean ok = gamePanel.loadLogo("src/logo/logo.png");
+            if (ok) {
+                gamePanel.showLogo(3000);
+            } else {
+                System.out.println("Logo button: failed to load src/logo/logo.png");
+            }
+            mainPanel.requestFocus();
+        }
+
         if (command.equals(exitB.getText())) {
             System.exit(0);
+        }
+        if (command.equals(playMusicB.getText())) {
+            gamePanel.playSound("ping", false);
         }
     
         mainPanel.requestFocus();
@@ -137,6 +169,7 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
     
     // implement methods in KeyListener interface
     
+    @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D ) {
@@ -148,12 +181,16 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
             gamePanel.updateGameEntities(1);
             //gamePanel.drawGameEntities();
         }
+
+        
     }
     
+    @Override
     public void keyReleased(KeyEvent e) {
     
     }
     
+    @Override
     public void keyTyped(KeyEvent e) {
     
     }
@@ -178,29 +215,26 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         updatePlayerHealht(x);
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            gamePanel.swung();
-        } 
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
     
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
     
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-            gamePanel.sheild();
-        }
+
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-            gamePanel.sheild();
-        }
     }
 }

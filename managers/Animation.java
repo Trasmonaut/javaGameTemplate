@@ -15,7 +15,7 @@ public class Animation {
     private long startTime;					// start time of the animation or time since last update
     private long totalDuration;					// total duration of the animation
 
-        private final boolean loop;
+    private final boolean loop;
     private boolean isActive;
 
     /**

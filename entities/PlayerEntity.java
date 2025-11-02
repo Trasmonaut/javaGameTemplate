@@ -35,7 +35,6 @@ public class PlayerEntity {
 
 
     }
-       
 
     public void draw() {
         Graphics g = panel.getGraphics();

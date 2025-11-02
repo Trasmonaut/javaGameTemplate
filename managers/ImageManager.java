@@ -9,11 +9,10 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 /**
-   The ImageManager class manages the loading and processing of images.
+The ImageManager class manages the loading and processing of images.
 */
 
 public class ImageManager {
-      
    	public ImageManager () {
 
 	}
