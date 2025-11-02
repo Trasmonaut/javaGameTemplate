@@ -41,7 +41,7 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         // Window basics
        
 
-        setTitle("Java Game Template");
+        setTitle("Java Game Template v1.1");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Maximize the frame to fill the screen
