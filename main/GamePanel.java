@@ -31,6 +31,7 @@ public class GamePanel extends JPanel {
 
     // Sound manager 
     private SoundManager soundManager;
+    private boolean dialogueActive = false;
 
     // Logo components
     private managers.LogoManager logoManager;
@@ -67,9 +68,7 @@ public class GamePanel extends JPanel {
 
         // Dialogue setup (reads from src/dialouge/test.txt)
     
-        initDialogueBoxEntity();
-
-        initLogo("src/logo/logo.png", 3000);
+    initDialogueBoxEntity();
     }
 
     public DialogueBoxEntity initDialogueBoxEntity(){
@@ -77,7 +76,8 @@ public class GamePanel extends JPanel {
     
         String first = (dialogueManager.hasNext()) ? dialogueManager.nextLine() : "";
         dialogueBox.setText(first);
-        System.out.println("Dialogue loaded: " + first);
+        dialogueActive = (first != null && !first.isEmpty());
+        System.out.println("Dialogue loaded: " + first + " active=" + dialogueActive);
         return dialogueBox;
     }
 
@@ -88,12 +88,17 @@ public class GamePanel extends JPanel {
 
     /** Update entities based on a direction code (1..8). */
     public void updateGameEntities(int direction) {
-        if (!isRunning || player == null) return;
+        if (!isRunning || player == null) 
+            return;
+        if (isPaused()) 
+            return; // freeze player input while dialogue or logo is active
         player.move(direction);
     }
 
     /** Advance non-input game logic per tick (kept minimal). */
     public void updateGameEntities() {
+        // Pause non-input updates while dialogue or logo is active
+        if (isPaused()) return;
         // No-op in the template; extend with your own logic/timers.
     }
 
@@ -115,7 +120,7 @@ public class GamePanel extends JPanel {
         // If a logo is active it should occupy the entire screen; draw it first and skip other renders
         if (logoManager != null && logoManager.isActive()) {
             logoEntity.draw(g2, backBuffer.getWidth(), backBuffer.getHeight());
-            
+
         } else {
             // Draw player
             if (player != null) {
@@ -139,8 +144,9 @@ public class GamePanel extends JPanel {
     }
 
     public void triggerLogo() {
-        if (logoEntity != null) {
-            logoEntity.showLogo(30000);
+        if (logoManager != null) {
+            // show for 30s by default when triggered this way
+            logoManager.show(30000);
             System.out.println("Logo triggered.");
         }
     }
@@ -151,8 +157,8 @@ public class GamePanel extends JPanel {
             System.out.println("Game already started. Reopen application to start again.");
             return;
         }
-        isStarted = true;
-        isRunning = true;
+    isStarted = true;
+    isRunning = true;
         // ~60 FPS timer driving update + render
         gameTimer = new Timer(16, e -> {
             // reference event so lambda parameter is used (keeps it simple)
@@ -177,10 +183,12 @@ public class GamePanel extends JPanel {
         if (next == null) {
             // no more lines - remove box
             dialogueBox = null;
+            dialogueActive = false;
             System.out.println("End of dialogue.");
         }
         else{
             dialogueBox.setText(next);
+            dialogueActive = !next.isEmpty();
             System.out.println("Dialogue loaded: " + next);
         }
     }
@@ -211,5 +219,16 @@ public class GamePanel extends JPanel {
     public void showLogo(long durationMs) {
         if (logoManager == null) return;
         logoManager.show(durationMs);
+    }
+
+    /** Return true when either dialogue or logo is active and gameplay should be paused. */
+    public boolean isPaused() {
+        if (dialogueActive) 
+            return true;
+
+        if (logoManager != null && logoManager.isActive()) 
+            return true;
+
+        return false;
     }
 }

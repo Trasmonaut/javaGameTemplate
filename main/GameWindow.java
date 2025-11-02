@@ -39,8 +39,7 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
 
     public GameWindow() {
         // Window basics
-       
-
+        
         setTitle("Java Game Template v1.1");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
