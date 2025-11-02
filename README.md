@@ -1,4 +1,4 @@
-# javaGameTemplate
+# JavaGameTemplate
 
 A small, readable Java 2D game starter you can copy into new projects. It focuses on clarity and minimum moving parts: a window, a panel with a tiny game loop (Swing Timer), a simple player entity, basic input, asset helpers, and optional dialogue support.
 
