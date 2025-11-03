@@ -106,7 +106,8 @@ To change the script, edit `src/dialouge/test.txt` (one line per entry). To disa
 
 ## Changelog (high level)
 
-- 2025-11-02 — Version 1.1
+- 2025-11-03 — Version 1.1.2
   - SoundManager rework, logo support, dialogue system, title update, image/animation fixes, project reorganization.
+  - TransitionManager rework
 
 Happy game making!
