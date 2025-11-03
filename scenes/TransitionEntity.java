@@ -1,4 +1,4 @@
-package entities;
+package scenes;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

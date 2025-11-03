@@ -1,15 +1,13 @@
 package main;
 
-import entities.*;
+import entities.PlayerEntity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import managers.DialogueManager;
+import managers.SceneManager;
 import managers.SoundManager;
-
-
 
 /**
  * GamePanel: minimal, self-contained game surface for the template.
@@ -24,27 +22,14 @@ public class GamePanel extends JPanel {
     private PlayerEntity player;
     private int screenwidth = GameWindow.screenWidth;
     private int screenheight = GameWindow.screenHeight;
-
-    // Dialogue components
-    private DialogueManager dialogueManager;
-    private DialogueBoxEntity dialogueBox;
-
-    // Sound manager 
-    private SoundManager soundManager;
-    private boolean dialogueActive = false;
-
-    // Logo components
-    private managers.LogoManager logoManager;
-    private entities.LogoEntity logoEntity;
-    // Transition components
-    private managers.TransitionManager transitionManager;
-    private entities.TransitionEntity transitionEntity;
-
-    // (no longer using ScreenTransitionEntity)
-
     private Timer gameTimer;
     private boolean isStarted;
     private boolean isRunning;
+    private boolean isPaused = false; 
+
+    // Managers
+    private SceneManager sceneManager;
+    private SoundManager soundManager;
 
     private BufferedImage backBuffer; // offscreen buffer to draw into (created to match panel size)
 
@@ -54,14 +39,9 @@ public class GamePanel extends JPanel {
         isStarted = false;
         isRunning = false;
         soundManager = SoundManager.getInstance();
-        dialogueBox = new DialogueBoxEntity();
-        dialogueManager = DialogueManager.getInstance();
-        logoManager = managers.LogoManager.getInstance();
-        logoEntity = new LogoEntity();
-    transitionManager = managers.TransitionManager.getInstance();
-    transitionEntity = new TransitionEntity();
-    // Back buffer will be created on first render to match the actual panel size
-    backBuffer = null;
+        sceneManager = SceneManager.getInstance();
+        // Back buffer will be created on first render to match the actual panel size
+        backBuffer = null;
     }
 
     /** Create initial entities for a new game. */
@@ -70,22 +50,14 @@ public class GamePanel extends JPanel {
         player = new PlayerEntity(this, screenwidth/2 - PlayerEntity.diameter/2, screenheight/2 - PlayerEntity.diameter/2);
         GameWindow.updatePointChecker(0);
         GameWindow.updatePlayerHealht(player.health);
-        
         System.out.println("Player created at (" + player.x + "," + player.y + ")");
 
-        // Dialogue setup (reads from src/dialouge/test.txt)
-    
-    initDialogueBoxEntity();
+        // Initialize other game entities here
     }
 
-    public DialogueBoxEntity initDialogueBoxEntity(){
-        dialogueManager.loadFromFile("src/dialouge/test.txt");
-    
-        String first = (dialogueManager.hasNext()) ? dialogueManager.nextLine() : "";
-        dialogueBox.setText(first);
-        dialogueActive = (first != null && !first.isEmpty());
-        System.out.println("Dialogue loaded: " + first + " active=" + dialogueActive);
-        return dialogueBox;
+    public void startDialogueByName(String name){
+        sceneManager.showDialogueFromFile("src/dialouge/" + name + ".txt");
+
     }
 
     /** Play a sound effect by name. */
@@ -97,15 +69,15 @@ public class GamePanel extends JPanel {
     public void updateGameEntities(int direction) {
         if (!isRunning || player == null) 
             return;
-        if (isPaused()) 
-            return; // freeze player input while dialogue or logo is active
+        if (isPaused || sceneManager.isAnyActive()) 
+            return; // freeze player input while dialogue, logo or transition is active
         player.move(direction);
     }
 
     /** Advance non-input game logic per tick (kept minimal). */
     public void updateGameEntities() {
-        // Pause non-input updates while dialogue or logo is active
-        if (isPaused()) return;
+        // Pause non-input updates while paused or any scene overlay is active
+        if (isPaused || sceneManager.isAnyActive()) return;
         // No-op in the template; extend with your own logic/timers.
     }
 
@@ -124,26 +96,18 @@ public class GamePanel extends JPanel {
         g2.setColor(getBackground());
         g2.fillRect(0, 0, backBuffer.getWidth(), backBuffer.getHeight());
 
-        // If a logo is active it should occupy the entire screen; draw it first and skip other renders
-        if (logoManager != null && logoManager.isActive()) {
-            logoEntity.draw(g2, backBuffer.getWidth(), backBuffer.getHeight());
-
+        // Ask SceneManager to draw any active overlays. If a logo is active it will
+        // occupy the full screen; otherwise we draw game content first and let the
+        // SceneManager draw overlays (dialogue/transition) on top.
+        if (sceneManager.isLogoActive()) {
+            sceneManager.draw(g2, backBuffer.getWidth(), backBuffer.getHeight());
         } else {
-            // Draw player
+            // Draw player and other game content
             if (player != null) {
                 player.draw(g2);
             }
-
-            // Draw dialogue box overlay (if any)
-            if (dialogueBox != null) {
-                dialogueBox.draw(g2, backBuffer.getWidth(), backBuffer.getHeight());
-    
-            }
-        }
-
-        // Draw transition overlay on top if active (blocks the screen)
-        if (transitionManager != null && transitionManager.isActive()) {
-            transitionEntity.draw(g2, backBuffer.getWidth(), backBuffer.getHeight());
+            // Draw overlays (dialogue, transition) on top of game content
+            sceneManager.draw(g2, backBuffer.getWidth(), backBuffer.getHeight());
         }
 
         // Blit buffer to screen (1:1 since buffer matches panel size)
@@ -155,14 +119,37 @@ public class GamePanel extends JPanel {
         g2.dispose();
     }
 
-    public void triggerLogo() {
-        boolean logoLoaded = initLogo("src/logo/logo.png");
-        if (logoLoaded) {
-            showLogo(3000);
-        } else {
-            System.out.println("Logo button: failed to load src/logo/logo.png");
-        }
+    
+    public void advanceDialogue() {
+        sceneManager.advanceDialogue();
     }
+
+    // -------- Convenience wrappers for SceneManager (used by GameWindow UI) --------
+    public boolean loadLogo(String path) {
+        return sceneManager.loadLogo(path);
+    }
+
+    public void showLogo(long durationMs) {
+        sceneManager.showLogo(durationMs);
+    }
+
+    public void triggerTransition(long durationMs) {
+        sceneManager.showTransition(durationMs);
+    }
+
+    public boolean showDialogueFromFile(String path) {
+        return sceneManager.showDialogueFromFile(path);
+    }
+
+    /** Backward-compatible helper used by GameWindow to load & show the default logo. */
+    public void triggerLogo() {
+        // default logo path used by the template
+        String defaultLogo = "src/logo/logo.png";
+        boolean ok = loadLogo(defaultLogo);
+        if (ok) showLogo(3000);
+    }
+
+
 
     /** Start the game loop once. */
     public void startGame() {
@@ -185,72 +172,16 @@ public class GamePanel extends JPanel {
         System.out.println("Number of threads: " + Thread.activeCount());
     }
 
-    // Advance to the next dialogue line (called by the window Next button)
-    public void nextDialogue() {
-        if (dialogueManager == null || dialogueBox == null) {
-            System.err.println("DialogueManager or DialogueBoxEntity not initialized.");
-            return;
-        }
-        String next = dialogueManager.nextLine();
-
-        if (next == null) {
-            // no more lines - remove box
-            dialogueBox = null;
-            dialogueActive = false;
-            System.out.println("End of dialogue.");
-        }
-        else{
-            dialogueBox.setText(next);
-            dialogueActive = !next.isEmpty();
-            System.out.println("Dialogue loaded: " + next);
+    public void pauseGame() {  //Toggle pause state
+        if (isRunning){
+            isPaused = !isPaused;
         }
     }
 
-    public boolean initLogo(String path){
-        logoManager = managers.LogoManager.getInstance();
-        logoEntity = new LogoEntity();
-
-        if (path != null && !path.isEmpty()) {
-            boolean loaded = logoManager.loadFromFile(path);
-            if (!loaded) {
-                System.err.println("Failed to load logo from path: " + path);
-                return false;
-            }
+    public void pauseGameplay(boolean pause){  //Pause gameplay without toggling for events like dialogue or logos 
+        if (isRunning){
+            isPaused = pause;
         }
-
-        System.out.println("Logo initialized and shown");
-        return (logoManager != null && logoEntity != null);
     }
 
-    /** Load a logo image into the LogoManager. Returns true on success. */
-    public boolean loadLogo(String path) {
-        if (logoManager == null) return false;
-        return logoManager.loadFromFile(path);
-    }
-
-    /** Show loaded logo for the specified duration (milliseconds). */
-    public void showLogo(long durationMs) {
-        if (logoManager == null) return;
-        logoManager.show(durationMs);
-    }
-
-    /** Return true when either dialogue or logo is active and gameplay should be paused. */
-    public boolean isPaused() {
-        if (dialogueActive) 
-            return true;
-
-        if (logoManager != null && logoManager.isActive()) 
-            return true;
-
-        if (transitionManager != null && transitionManager.isActive())
-            return true;
-
-        return false;
-    }
-
-    /** Trigger a transition overlay for the specified duration (ms). */
-    public void triggerTransition(long durationMs) {
-        if (transitionManager == null) return;
-        transitionManager.show(durationMs);
-    }
 }
