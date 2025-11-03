@@ -33,9 +33,10 @@ This README has been updated to reflect the changes in Version 1.1 (see latest c
   - SoundManager.java — reworked sound singleton (optional)
   - DialogueManager.java — reads lines from a text file one-by-one
   - LogoManager.java — optional manager for logo lifecycle
-- src/dialouge/test.txt — sample dialogue text (one line per entry)
-- src/logo/logo.png — example splash/logo image (if present)
-- src/sounds/ping.wav — example sound effect
+- src
+  - src/dialouge/test.txt — sample dialogue text (one line per entry)
+  - src/logo/logo.png — example splash/logo image (if present)
+  - src/sounds/ping.wav — example sound effect
 - util/
   - ImageFX.java — basic image effects / helpers
 
