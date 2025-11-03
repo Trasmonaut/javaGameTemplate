@@ -38,9 +38,17 @@ public class LogoManager {
     /** Show the currently loaded logo for the given duration in milliseconds. */
     public void show(long durationMs) {
         if (logo == null) return;
+        if (active) {
+            return;
+        }
         active = true;
         endTimeMs = System.currentTimeMillis() + Math.max(0, durationMs);
         System.out.println("LogoManager: showing logo for " + durationMs + "ms");
+
+        if (System.currentTimeMillis() > endTimeMs) {
+            reset();
+        }
+
     }
 
     /** Hide the logo immediately. */

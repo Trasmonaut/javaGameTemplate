@@ -144,10 +144,11 @@ public class GamePanel extends JPanel {
     }
 
     public void triggerLogo() {
-        if (logoManager != null) {
-            // show for 30s by default when triggered this way
-            logoManager.show(30000);
-            System.out.println("Logo triggered.");
+        boolean logoLoaded = initLogo("src/logo/logo.png");
+        if (logoLoaded) {
+            showLogo(3000);
+        } else {
+            System.out.println("Logo button: failed to load src/logo/logo.png");
         }
     }
 
@@ -193,7 +194,7 @@ public class GamePanel extends JPanel {
         }
     }
 
-    public boolean initLogo(String path, int durationMs){
+    public boolean initLogo(String path){
         logoManager = managers.LogoManager.getInstance();
         logoEntity = new LogoEntity();
 

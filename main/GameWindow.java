@@ -145,13 +145,8 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         }
 
         if (command.equals(logoB.getText())) {
-            // Load and show the default logo for 3 seconds
-            boolean ok = gamePanel.loadLogo("src/logo/logo.png");
-            if (ok) {
-                gamePanel.showLogo(3000);
-            } else {
-                System.out.println("Logo button: failed to load src/logo/logo.png");
-            }
+            // Load and show the default logo
+            gamePanel.triggerLogo();
             mainPanel.requestFocus();
         }
 
