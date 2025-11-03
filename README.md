@@ -17,7 +17,7 @@ This README has been updated to reflect the changes in Version 1.1 (see latest c
 - Minor bug fixes in `Animation` and `ImageManager` for more robust asset handling.
 - Project structure has been reorganized for clarity and maintainability.
 - Added `ImageFX.java` (image helper / effects utilities).
-- Added ScreenTransition class, which creates screen animations which occupy the full screen, Fading in and out to create a transition between game features.
+- Added `ScreenTransition.java` class, which creates screen animations which occupy the full screen, Fading in and out to create a transition between game features.
 
 ## Project structure (updated)
 
