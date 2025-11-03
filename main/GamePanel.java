@@ -36,6 +36,11 @@ public class GamePanel extends JPanel {
     // Logo components
     private managers.LogoManager logoManager;
     private entities.LogoEntity logoEntity;
+    // Transition components
+    private managers.TransitionManager transitionManager;
+    private entities.TransitionEntity transitionEntity;
+
+    // (no longer using ScreenTransitionEntity)
 
     private Timer gameTimer;
     private boolean isStarted;
@@ -53,6 +58,8 @@ public class GamePanel extends JPanel {
         dialogueManager = DialogueManager.getInstance();
         logoManager = managers.LogoManager.getInstance();
         logoEntity = new LogoEntity();
+    transitionManager = managers.TransitionManager.getInstance();
+    transitionEntity = new TransitionEntity();
     // Back buffer will be created on first render to match the actual panel size
     backBuffer = null;
     }
@@ -132,6 +139,11 @@ public class GamePanel extends JPanel {
                 dialogueBox.draw(g2, backBuffer.getWidth(), backBuffer.getHeight());
     
             }
+        }
+
+        // Draw transition overlay on top if active (blocks the screen)
+        if (transitionManager != null && transitionManager.isActive()) {
+            transitionEntity.draw(g2, backBuffer.getWidth(), backBuffer.getHeight());
         }
 
         // Blit buffer to screen (1:1 since buffer matches panel size)
@@ -230,6 +242,15 @@ public class GamePanel extends JPanel {
         if (logoManager != null && logoManager.isActive()) 
             return true;
 
+        if (transitionManager != null && transitionManager.isActive())
+            return true;
+
         return false;
+    }
+
+    /** Trigger a transition overlay for the specified duration (ms). */
+    public void triggerTransition(long durationMs) {
+        if (transitionManager == null) return;
+        transitionManager.show(durationMs);
     }
 }

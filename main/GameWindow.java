@@ -29,6 +29,7 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
     private JButton startB;
     private JButton exitB;
     private JButton logoB;
+    private JButton transitionB;
     private JButton nextB;
     private JButton playMusicB;
 
@@ -40,7 +41,7 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
     public GameWindow() {
         // Window basics
 
-        setTitle("Java Game Template v1.1-1");
+        setTitle("Java Game Template v1.1.2");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Maximize the frame to fill the screen
@@ -71,16 +72,18 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         healthTF.setBackground(Color.black);
 
         // Buttons
-        startB = new JButton("Start Game");
-        exitB = new JButton("Exit");
-        nextB = new JButton("Next");
-        logoB = new JButton("Show Logo");
-        playMusicB = new JButton("Play Music");
+    startB = new JButton("Start Game");
+    exitB = new JButton("Exit");
+    nextB = new JButton("Next");
+    logoB = new JButton("Show Logo");
+    transitionB = new JButton("Transition");
+    playMusicB = new JButton("Play Music");
 
         startB.addActionListener(this);
         exitB.addActionListener(this);
         nextB.addActionListener(this);
         logoB.addActionListener(this);
+    transitionB.addActionListener(this);
         playMusicB.addActionListener(this);
 
         // Main panel layout
@@ -100,11 +103,12 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
 
         // Buttons row
         JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
-        buttonPanel.add(startB);
-        buttonPanel.add(nextB);
-        buttonPanel.add(logoB);
-        buttonPanel.add(playMusicB);
-        buttonPanel.add(exitB);
+    buttonPanel.add(startB);
+    buttonPanel.add(nextB);
+    buttonPanel.add(logoB);
+    buttonPanel.add(transitionB);
+    buttonPanel.add(playMusicB);
+    buttonPanel.add(exitB);
 
         // Add to window
         mainPanel.add(infoPanel);
@@ -147,6 +151,12 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         if (command.equals(logoB.getText())) {
             // Load and show the default logo
             gamePanel.triggerLogo();
+            mainPanel.requestFocus();
+        }
+
+        if (command.equals(transitionB.getText())) {
+            // Trigger a 2 second transition (with built-in 0.2s fade)
+            gamePanel.triggerTransition(2000);
             mainPanel.requestFocus();
         }
 
