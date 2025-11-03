@@ -17,22 +17,25 @@ This README has been updated to reflect the changes in Version 1.1 (see latest c
 - Minor bug fixes in `Animation` and `ImageManager` for more robust asset handling.
 - Project structure has been reorganized for clarity and maintainability.
 - Added `ImageFX.java` (image helper / effects utilities).
+- Added ScreenTransition class, which creates screen animations which occupy the full screen, Fading in and out to create a transition between game features.
 
 ## Project structure (updated)
 
 - main/
   - GameApplication.java — entry point
   - GameWindow.java — top-level Swing window (info bar, game panel, buttons)
-  - GamePanel.java — rendering surface and game loop (now supports logo trigger & dialogue wiring)
+  - GamePanel.java — rendering surface and game loop (now supports logo trigger, Screen Transition & dialogue wiring)
 - entities/
   - PlayerEntity.java — example player (draws a circle, moves on input)
   - DialogueBoxEntity.java — simple overlay box to draw dialogue text
   - LogoEntity.java — displays splash/logo with improved scaling
+  - TransitionEntity.java - displays a screen transition with a fade in/out animatino
 - managers/
   - ImageManager.java — image loading helpers (bug fixes / improvements)
   - SoundManager.java — reworked sound singleton (optional)
   - DialogueManager.java — reads lines from a text file one-by-one
   - LogoManager.java — optional manager for logo lifecycle
+  - TransitionManager.java - Manages Transition states
 - src
   - src/dialouge/test.txt — sample dialogue text (one line per entry)
   - src/logo/logo.png — example splash/logo image (if present)
