@@ -66,7 +66,6 @@ public class PlayerEntity {
     }
 
     
-   
     public void move(int direction) {
         if (!panel.isVisible()) return;
 

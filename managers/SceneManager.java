@@ -59,9 +59,11 @@ public class SceneManager {
         if (next == null) {
             dialogueActive = false;
             dialogueBox.setText("");
+
         } else {
             dialogueBox.setText(next);
             dialogueActive = !next.isEmpty();
+            System.out.println("SceneManager: Advanced dialogue to next line.");
         }
     }
 

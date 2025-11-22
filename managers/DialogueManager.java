@@ -56,6 +56,7 @@ public class DialogueManager {
     public String nextLine() {
         if (!hasNext()) return null;
         String s = lines.get(index);
+        
         index++;
         return s;
     }

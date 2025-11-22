@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import managers.InputManager;
 import managers.SceneManager;
 import managers.SoundManager;
 
@@ -19,17 +20,17 @@ import managers.SoundManager;
  */
 public class GamePanel extends JPanel {
 
-    private PlayerEntity player;
-    private int screenwidth = GameWindow.screenWidth;
-    private int screenheight = GameWindow.screenHeight;
+    public PlayerEntity player;
+    private final int screenwidth = GameWindow.screenWidth;
+    private final int screenheight = GameWindow.screenHeight;
     private Timer gameTimer;
-    private boolean isStarted;
-    private boolean isRunning;
-    private boolean isPaused = false; 
+    public boolean isStarted;
+    public boolean isRunning;
+    public boolean isPaused = false;
 
     // Managers
-    private SceneManager sceneManager;
-    private SoundManager soundManager;
+    public SceneManager sceneManager;
+    public SoundManager soundManager;
 
     private BufferedImage backBuffer; // offscreen buffer to draw into (created to match panel size)
 
@@ -42,6 +43,7 @@ public class GamePanel extends JPanel {
         sceneManager = SceneManager.getInstance();
         // Back buffer will be created on first render to match the actual panel size
         backBuffer = null;
+       
     }
 
     /** Create initial entities for a new game. */
@@ -51,6 +53,8 @@ public class GamePanel extends JPanel {
         GameWindow.updatePointChecker(0);
         GameWindow.updatePlayerHealht(player.health);
         System.out.println("Player created at (" + player.x + "," + player.y + ")");
+
+        InputManager.getInstance().initPlayerEntity(player);
 
         // Initialize other game entities here
     }
@@ -65,20 +69,11 @@ public class GamePanel extends JPanel {
         soundManager.playClip(name, loop);
     }
 
-    /** Update entities based on a direction code (1..8). */
-    public void updateGameEntities(int direction) {
-        if (!isRunning || player == null) 
-            return;
-        if (isPaused || sceneManager.isAnyActive()) 
-            return; // freeze player input while dialogue, logo or transition is active
-        player.move(direction);
-    }
-
     /** Advance non-input game logic per tick (kept minimal). */
     public void updateGameEntities() {
-        // Pause non-input updates while paused or any scene overlay is active
-        if (isPaused || sceneManager.isAnyActive()) return;
-        // No-op in the template; extend with your own logic/timers.
+    
+        if (isPaused || sceneManager.isAnyActive())
+            return;
     }
 
     // ============================ LOOP ============================ //

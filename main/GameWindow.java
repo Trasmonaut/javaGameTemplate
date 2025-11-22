@@ -1,22 +1,19 @@
 package main;
-
-import java.awt.*;              // GUI objects
-import java.awt.event.*;        // AWT events
-import javax.swing.*;           // Swing widgets
+import java.awt.*;
+import java.awt.event.*;                // GUI objects
+import javax.swing.*;                   // AWT events
+import managers.*;                      // Swing widgets
 
 /**
  * GameWindow: a simple, readable template window.
  * - Top info bar shows health and points
  * - Center is the GamePanel
  * - Bottom has Start/Exit buttons
- *
+
  * Keep this minimal so it's easy to reuse for new games.
  */
 public class GameWindow extends JFrame implements ActionListener, KeyListener, MouseListener {
-
-    // Icons for info labels
-   
-
+    private InputManager inputManager; // centralized input handler
     // Info bar
     private JLabel pointsL;
     private JLabel healthL;
@@ -41,8 +38,7 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
 
     public GameWindow() {
         // Window basics
-
-        setTitle("Java Game Template v1.1.3");
+        setTitle("Java Game Template v1.1.4");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // Maximize the frame to fill the screen
@@ -133,6 +129,10 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+
+        // Initialize InputManager and link to GamePanel
+        inputManager = InputManager.getInstance();
+        inputManager.setGamePanel(gamePanel);
     }
     
     
@@ -142,44 +142,8 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
     public void actionPerformed(ActionEvent e) {
     
         String command = e.getActionCommand();
-        
-        //statusBarTF.setText(command + " button clicked.");
-        
-        if (command.equals(startB.getText())) {
-            gamePanel.startGame();
-            mainPanel.requestFocus();
-        }
-        
-        if (command.equals(startDialogueB.getText())) {
-            // Load and show dialogue from the sample file
-            gamePanel.startDialogueByName("test");
-            mainPanel.requestFocus();
-        }
-
-        if (command.equals(nextB.getText())) {
-            gamePanel.advanceDialogue();
-            mainPanel.requestFocus();
-        }
-
-        if (command.equals(logoB.getText())) {
-            // Load and show the default logo
-            gamePanel.triggerLogo();
-            mainPanel.requestFocus();
-        }
-
-        if (command.equals(transitionB.getText())) {
-            // Trigger a 2 second transition (with built-in 0.2s fade)
-            gamePanel.triggerTransition(2000);
-            mainPanel.requestFocus();
-        }
-
-        if (command.equals(exitB.getText())) {
-            System.exit(0);
-        }
-        if (command.equals(playMusicB.getText())) {
-            gamePanel.playSound("ping", false);
-        }
-    
+        // Delegate button actions to the centralized InputManager
+        inputManager.handleActionCommand(command);
         mainPanel.requestFocus();
     }
     
@@ -188,28 +152,18 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
     
     @Override
     public void keyPressed(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D ) {
-            gamePanel.updateGameEntities(2);
-            //gamePanel.drawGameEntities();
-        }
-    
-        if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A ) {
-            gamePanel.updateGameEntities(1);
-            //gamePanel.drawGameEntities();
-        }
-
-        
+        inputManager.keyPressed(e);
+        mainPanel.requestFocus();
     }
     
     @Override
     public void keyReleased(KeyEvent e) {
-    
+        inputManager.keyReleased(e);
     }
     
     @Override
     public void keyTyped(KeyEvent e) {
-    
+        inputManager.keyTyped(e);
     }
     
     // implement methods in MouseListener interface
@@ -234,24 +188,26 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        inputManager.mouseClicked(e);
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-    
+        inputManager.mouseEntered(e);
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-    
+        inputManager.mouseExited(e);
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        inputManager.mousePressed(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        inputManager.mouseReleased(e);
     }
 }
