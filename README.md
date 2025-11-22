@@ -4,21 +4,10 @@ A small, readable Java 2D game starter you can copy into new projects. It focuse
 
 This README has been updated to reflect the changes in Version 1.1 (see latest commits).
 
-## What's new (Version 1.1.3)
+## What's new (Version 1.1.5)
+- InputManger class was introduced to handle all user inputs. Inputs are only updated once every game tick, to keep them in track.
+ Inputs are frozen during game state scenes, such as transitions, loadings, paused, etc.
 
-- Reworked SoundManager to improve sound effect handling and performance. A sound test file is included at `src/sounds/ping.wav`.
- - Added LogoEntity and LogoManager to display a splash/logo at game start. The logo image is located at `src/logo/logo.png`. The logo can be triggered from `GamePanel` with `triggerLogo()` (or similar wiring in the panel).
- - Centralized overlay control: `managers/SceneManager` now manages Dialogue, Logo and Transition subsystems. Use the SceneManager (via `GamePanel` wrapper methods) instead of manipulating those managers directly.
- - Added a simple Dialogue system:
-  - `managers/DialogueManager` — load dialogue lines from a text file and iterate them
-  - `scenes/DialogueBoxEntity` — draw a semi-transparent dialogue box at the bottom of the screen
-  - Sample dialogue file: `src/dialouge/test.txt`
-- Updated `GameWindow` title to "Java Game Template v1.1".
-- Improved logo scaling logic in `LogoEntity` to preserve aspect ratio and better cover the game panel.
-- Minor bug fixes in `Animation` and `ImageManager` for more robust asset handling.
-- Project structure has been reorganized for clarity and maintainability.
-- Added `ImageFX.java` (image helper / effects utilities).
-- Added `ScreenTransition.java` class, which creates screen animations which occupy the full screen, Fading in and out to create a transition between game features.
 
 ## Project structure (updated)
 
@@ -28,13 +17,18 @@ This README has been updated to reflect the changes in Version 1.1 (see latest c
   - GamePanel.java — rendering surface and game loop (now supports logo trigger & dialogue wiring)
 - entities/
   - PlayerEntity.java — example player (draws a circle, moves on input)
-  - DialogueBoxEntity.java — simple overlay box to draw dialogue text
-  - LogoEntity.java — displays splash/logo with improved scaling
+  - Entity.java - A framework for all entites
+  - GravityEntity.java - A framework for phyiscs based entities
+  - MoveableEntity.java - A framework for player interactble entities
 - managers/
   - ImageManager.java — image loading helpers (bug fixes / improvements)
   - SoundManager.java — reworked sound singleton (optional)
   - DialogueManager.java — reads lines from a text file one-by-one
   - LogoManager.java — optional manager for logo lifecycle
+- scenes
+  - DialogueBoxEntity.java — simple overlay box to draw dialogue text
+  - LogoEntity.java — displays splash/logo with improved scaling
+  - TransitionEntity.java - displays a simple screen transition
 - src
   - src/dialouge/test.txt — sample dialogue text (one line per entry)
   - src/logo/logo.png — example splash/logo image (if present)
@@ -49,14 +43,6 @@ No external dependencies are required beyond the JDK (uses Swing for rendering a
 - Launch `main.GameApplication`.
 - The window maximizes to your screen; the game panel is centered and uses the screen dimensions.
 
-## Controls (default)
-
-- Start Game: Start button
-- Exit: Exit button
-- Move: Left Arrow / A (left), Right Arrow / D (right)
-- Attack example: Left mouse click (triggers a demo point update)
-- Shield example: Right mouse press/release (demo toggle)
-- Dialogue Next: Next button (advances one line when dialogue is present)
 
 ## Dialogue system (simple)
 
