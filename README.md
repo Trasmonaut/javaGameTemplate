@@ -4,7 +4,7 @@ A small, readable Java 2D game starter you can copy into new projects. It focuse
 
 This README has been updated to reflect the changes in Version 1.1 (see latest commits).
 
-## What's new (Version 1.1)
+## What's new (Version 1.1.3)
 
 - Reworked SoundManager to improve sound effect handling and performance. A sound test file is included at `src/sounds/ping.wav`.
  - Added LogoEntity and LogoManager to display a splash/logo at game start. The logo image is located at `src/logo/logo.png`. The logo can be triggered from `GamePanel` with `triggerLogo()` (or similar wiring in the panel).
