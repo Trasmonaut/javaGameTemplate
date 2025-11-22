@@ -15,26 +15,26 @@ import managers.*;                      // Swing widgets
 public class GameWindow extends JFrame implements ActionListener, KeyListener, MouseListener {
     private InputManager inputManager; // centralized input handler
     // Info bar
-    private JLabel pointsL;
-    private JLabel healthL;
+    private final JLabel pointsL;
+    private final JLabel healthL;
     private static JTextField pointsTF;
     private static JTextField healthTF;
     public static int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
     // Buttons
-    private JButton startB;
-    private JButton exitB;
-    private JButton logoB;
-    private JButton startDialogueB;
-    private JButton transitionB;
-    private JButton nextB;
-    private JButton playMusicB;
+    private final JButton startB;
+    private final JButton exitB;
+    private final JButton logoB;
+    private final JButton startDialogueB;
+    private final JButton transitionB;
+    private final JButton nextB;
+    private final JButton playMusicB;
 
     // Layout
     private Container c;
-    private JPanel mainPanel;
-    private GamePanel gamePanel;
+    private final JPanel mainPanel;
+    private final GamePanel gamePanel;
 
     public GameWindow() {
         // Window basics
@@ -93,7 +93,8 @@ public class GameWindow extends JFrame implements ActionListener, KeyListener, M
 
         // Game area
         gamePanel = new GamePanel();
-        gamePanel.setPreferredSize(new Dimension(screenWidth, 700));
+        gamePanel.setPreferredSize(new Dimension(screenWidth, screenHeight - 100)); // leave space for info/button bars
+        System.out.println("Game panel size: " + gamePanel.getPreferredSize());
 
         // Info bar
         JPanel infoPanel = new JPanel(new GridLayout(1, 4));

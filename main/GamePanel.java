@@ -52,7 +52,7 @@ public class GamePanel extends JPanel {
         player = new PlayerEntity(this, screenwidth/2 - PlayerEntity.diameter/2, screenheight/2 - PlayerEntity.diameter/2);
         GameWindow.updatePointChecker(0);
         GameWindow.updatePlayerHealht(player.health);
-        System.out.println("Player created at (" + player.x + "," + player.y + ")");
+        System.out.println("Player created at (x=" + player.x + " y=," + player.y + ")");
 
         InputManager.getInstance().setGamePanel(this);
 

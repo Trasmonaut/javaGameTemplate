@@ -8,6 +8,8 @@ import java.awt.geom.Rectangle2D;
 public interface Entity { 
     void setPosition(int x, int y);
     void draw();  
+    void erase();
     Rectangle2D.Double getBoundingRectangle();
     boolean collidesWith(Entity other);
+
 }

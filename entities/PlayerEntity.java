@@ -5,25 +5,22 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 
-public class PlayerEntity {
+public class PlayerEntity implements MoveableEntity {
     public int damage = 2;
     public int  health = 25;
 
     private final JPanel panel;
     public int x;
     public int y;
-    public static int diameter = 100;
+    public static int diameter = 40;
     private final Color PlayerColor = Color.decode("#58d3ca");
     private final int speed = 5;
-  
 
     private Ellipse2D.Double player;
     private Ellipse2D.Double outline;
 
     private final Color backgroundColour;
     private Dimension dimension;
-
-   
 
     public PlayerEntity(JPanel p, int xPos, int yPos) {
         panel = p;
@@ -46,7 +43,7 @@ public class PlayerEntity {
     // Overload: draw onto a provided Graphics2D (e.g., an offscreen buffer)
     public void draw(Graphics2D g2) {
         player = new Ellipse2D.Double(x, y, diameter, diameter);
-        outline = new Ellipse2D.Double(x-5, y-5, diameter+10, diameter+10);
+        outline = new Ellipse2D.Double(x-(0.1*diameter), y-(0.1*diameter), diameter+(0.2*diameter), diameter+(0.2*diameter));
 
         g2.setColor(Color.BLACK);
         g2.fill(outline);
@@ -94,7 +91,18 @@ public class PlayerEntity {
     
     public Rectangle2D.Double getBoundingRectangle() {
         return new Rectangle2D.Double (x, y, diameter, diameter);
-     }
-  
-    
+    }
+
+    @Override
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public boolean collidesWith(Entity other) {
+        return this.getBoundingRectangle().intersects(other.getBoundingRectangle());
+    }
+
+
 }

@@ -15,7 +15,6 @@ public class InputManager implements KeyListener {
 
     // Output actions each frame
     private int actionCode = 0;
-    private boolean jumpPressed = false;
 
     public static InputManager getInstance() {
         if (instance == null) instance = new InputManager();
@@ -81,7 +80,7 @@ public class InputManager implements KeyListener {
             else if (down) actionCode = 4;
 
             // One-shot action example (jump)
-            jumpPressed = wasPressed(KeyEvent.VK_SPACE);
+            //jumpPressed = wasPressed(KeyEvent.VK_SPACE);
 
             // Send actions to game panel
             gamePanel.receiveInput(actionCode);
