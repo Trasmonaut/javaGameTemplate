@@ -76,11 +76,11 @@ public class GamePanel extends JPanel {
             return;
     }
 
-     public void receiveInput(int direction, boolean jump) {
+    public void receiveInput(int actionCode) {
         if (isPaused || player == null) return;
 
-        if (direction != 0) {
-            player.move(direction);
+        if (actionCode != 0) {
+            player.action(actionCode);
         }
 
     }

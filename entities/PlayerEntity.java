@@ -8,12 +8,12 @@ import javax.swing.*;
 public class PlayerEntity {
     public int damage = 2;
     public int  health = 25;
+
     private final JPanel panel;
     public int x;
     public int y;
     public static int diameter = 100;
     private final Color PlayerColor = Color.decode("#58d3ca");
-
     private final int speed = 5;
   
 
@@ -65,6 +65,12 @@ public class PlayerEntity {
         g.dispose();
     }
 
+    public void action(int actionCode) {
+        if(actionCode >= 1 && actionCode <= 8) {
+            move(actionCode);
+        }
+    }
+
     
     public void move(int direction) {
         if (!panel.isVisible()) return;
@@ -82,7 +88,7 @@ public class PlayerEntity {
             case 8 -> { x -= speed; if (x < 0) x = 0;  y += speed; if (y + diameter > dimension.height) y = dimension.height - diameter; } // Down-left
         }
 
-       
+
     }
 
     

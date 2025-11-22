@@ -14,7 +14,7 @@ public class InputManager implements KeyListener {
     private final boolean[] keysPressedThisFrame = new boolean[256];
 
     // Output actions each frame
-    private int movementDirection = 0;
+    private int actionCode = 0;
     private boolean jumpPressed = false;
 
     public static InputManager getInstance() {
@@ -68,23 +68,23 @@ public class InputManager implements KeyListener {
             boolean left  = isDown(KeyEvent.VK_A) || isDown(KeyEvent.VK_LEFT);
             boolean right = isDown(KeyEvent.VK_D) || isDown(KeyEvent.VK_RIGHT);
 
-            movementDirection = 0;
+            actionCode = 0;
 
             // 8-direction movement encoding
-            if (left && up) movementDirection = 6;
-            else if (right && up) movementDirection = 5;
-            else if (left && down) movementDirection = 8;
-            else if (right && down) movementDirection = 7;
-            else if (left) movementDirection = 1;
-            else if (right) movementDirection = 2;
-            else if (up) movementDirection = 3;
-            else if (down) movementDirection = 4;
+            if (left && up) actionCode = 6;
+            else if (right && up) actionCode = 5;
+            else if (left && down) actionCode = 8;
+            else if (right && down) actionCode = 7;
+            else if (left) actionCode = 1;
+            else if (right) actionCode = 2;
+            else if (up) actionCode = 3;
+            else if (down) actionCode = 4;
 
             // One-shot action example (jump)
             jumpPressed = wasPressed(KeyEvent.VK_SPACE);
 
             // Send actions to game panel
-            gamePanel.receiveInput(movementDirection, jumpPressed);
+            gamePanel.receiveInput(actionCode);
 
             // Reset one-shot keys
             clearPerFrameInputs();
