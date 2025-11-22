@@ -54,7 +54,7 @@ public class GamePanel extends JPanel {
         GameWindow.updatePlayerHealht(player.health);
         System.out.println("Player created at (" + player.x + "," + player.y + ")");
 
-        InputManager.getInstance().initPlayerEntity(player);
+        InputManager.getInstance().setGamePanel(this);
 
         // Initialize other game entities here
     }
@@ -74,6 +74,15 @@ public class GamePanel extends JPanel {
     
         if (isPaused || sceneManager.isAnyActive())
             return;
+    }
+
+     public void receiveInput(int direction, boolean jump) {
+        if (isPaused || player == null) return;
+
+        if (direction != 0) {
+            player.move(direction);
+        }
+
     }
 
     // ============================ LOOP ============================ //
@@ -160,6 +169,7 @@ public class GamePanel extends JPanel {
             if (e.getSource() == null) return;
             if (!isRunning) return;
             updateGameEntities();
+            InputManager.getInstance().processInputThisFrame();
             gameRender();
         });
         gameTimer.start();

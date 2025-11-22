@@ -1,88 +1,110 @@
 package managers;
 
-import entities.PlayerEntity;
 import java.awt.event.*;
 import main.GamePanel;
 
+public class InputManager implements KeyListener {
 
-/**
- * InputManager: handles user input and updates game entities accordingly.
- *  This class follows the Singleton pattern to ensure only one instance exists.
- */
-public class InputManager {
-    private static InputManager instance = null;	// keeps track of Singleton instance
+    private static InputManager instance;
+
     private GamePanel gamePanel;
-    private PlayerEntity player;
 
-    public void setGamePanel(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+    // Tracks key states
+    private final boolean[] keysDown = new boolean[256];
+    private final boolean[] keysPressedThisFrame = new boolean[256];
+
+    // Output actions each frame
+    private int movementDirection = 0;
+    private boolean jumpPressed = false;
+
+    public static InputManager getInstance() {
+        if (instance == null) instance = new InputManager();
+        return instance;
     }
-    
-    public void initPlayerEntity(PlayerEntity player) {
-        if (this.gamePanel == null) return;
-        this.player = gamePanel.player;
+
+    public void setGamePanel(GamePanel panel) {
+        this.gamePanel = panel;
     }
 
-    /** Create an empty manager; call loadFromFile before use. */
-    public InputManager() { }
-
-    public static InputManager getInstance() {	// class method to retrieve instance of Singleton
-		if (instance == null)
-			instance = new InputManager();
-            
-
-		return instance;
-	}    
-
-    // Handle raw KeyEvent from the GameWindow
+    @Override
     public void keyPressed(KeyEvent e) {
+        int k = e.getKeyCode();
+        if (k < 0 || k >= 256) return;
 
-        if (gamePanel == null || e == null) return;
-        int keyCode = e.getKeyCode();
-
-
-        if (!gamePanel.isPaused && gamePanel.sceneManager.isAnyActive())
-            if (keyCode == KeyEvent.VK_SPACE) {
-                gamePanel.advanceDialogue();
-                System.out.println("InputManager: SPACE pressed to advance dialogue.");
-                return;
-            }
-        
-
-        else if (!gamePanel.isRunning || player == null || gamePanel.isPaused || gamePanel.sceneManager.isAnyActive())
-            return; // freeze player input while dialogue/logo/transition active
-        // Update player entity position based on keyCode
-        switch (keyCode) {
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
-                player.move(2);
-                break;
-
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
-                player.move(1);
-                break;
-
-        // reserved for future use
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
-                break;
-        // reserved for future use
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
-                break;
-            default:
-                break;
+        if (!keysDown[k]) {
+            keysPressedThisFrame[k] = true; // one-shot detection
         }
 
-        
+        keysDown[k] = true;
     }
 
-    public void keyReleased(KeyEvent e) {}
+    @Override
+    public void keyReleased(KeyEvent e) {
+        int k = e.getKeyCode();
+        if (k < 0 || k >= 256) return;
+        keysDown[k] = false;
+    }
 
+    @Override
     public void keyTyped(KeyEvent e) {}
+    // Main input logic run ONCE per frame from GameLoop
+    public void processInputThisFrame() {
+        if (gamePanel == null && !gamePanel.isPaused) return;
 
-    // Handle action commands (buttons) from GameWindow
+        // Check for dialogue advance
+        
+        if (gamePanel.sceneManager.isAnyActive()){
+            if (wasPressed(KeyEvent.VK_SPACE)) {
+                gamePanel.advanceDialogue();
+                System.out.println("InputManager: SPACE pressed to advance dialogue.");
+                clearPerFrameInputs();
+                return;
+            }
+
+        }else{
+
+            boolean up    = isDown(KeyEvent.VK_W) || isDown(KeyEvent.VK_UP);
+            boolean down  = isDown(KeyEvent.VK_S) || isDown(KeyEvent.VK_DOWN);
+            boolean left  = isDown(KeyEvent.VK_A) || isDown(KeyEvent.VK_LEFT);
+            boolean right = isDown(KeyEvent.VK_D) || isDown(KeyEvent.VK_RIGHT);
+
+            movementDirection = 0;
+
+            // 8-direction movement encoding
+            if (left && up) movementDirection = 6;
+            else if (right && up) movementDirection = 5;
+            else if (left && down) movementDirection = 8;
+            else if (right && down) movementDirection = 7;
+            else if (left) movementDirection = 1;
+            else if (right) movementDirection = 2;
+            else if (up) movementDirection = 3;
+            else if (down) movementDirection = 4;
+
+            // One-shot action example (jump)
+            jumpPressed = wasPressed(KeyEvent.VK_SPACE);
+
+            // Send actions to game panel
+            gamePanel.receiveInput(movementDirection, jumpPressed);
+
+            // Reset one-shot keys
+            clearPerFrameInputs();
+        }
+    }
+
+    private boolean isDown(int key) {
+        return key >= 0 && key < 256 && keysDown[key];
+    }
+
+    private boolean wasPressed(int key) {
+        return key >= 0 && key < 256 && keysPressedThisFrame[key];
+    }
+
+    private void clearPerFrameInputs() {
+        for (int i = 0; i < keysPressedThisFrame.length; i++) {
+            keysPressedThisFrame[i] = false;
+        }
+    }
+
     public void handleActionCommand(String command) {
         if (command == null || gamePanel == null) return;
 
@@ -113,6 +135,8 @@ public class InputManager {
                 break;
         }
     }
+
+
 
     // Mouse events forwarded from GameWindow
     
